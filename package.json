@@ -9,6 +9,7 @@
     "@mui/material": "^5.8.0",
     "@react-three/drei": "^9.11.2",
     "@react-three/fiber": "^8.0.18",
+    "@react-three/postprocessing": "^2.4.2",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.2.0",
     "@testing-library/user-event": "^13.5.0",
@@ -38,7 +39,7 @@
     "build-prod": "react-scripts build --prod",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "eval $(grep '^DEPLOYMENT_URI' .env) && aws --profile unegma s3 sync --delete ./build s3://$DEPLOYMENT_URI",
+    "deploy": "eval $(grep '^DEPLOYMENT_URI' .env) && eval $(grep '^PROFILE' .env) && aws --profile $PROFILE s3 sync --delete ./build s3://$DEPLOYMENT_URI",
     "BUILD-AND-DEPLOY": "npm run build && npm run deploy",
     "BUILD-AND-DEPLOY-PROD": "npm run build-prod && npm run deploy"
   },

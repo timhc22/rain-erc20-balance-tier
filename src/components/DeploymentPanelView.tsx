@@ -6,7 +6,7 @@ import InputLabel from "@mui/material/InputLabel";
 import Input from "@mui/material/Input";
 import Button from "@mui/material/Button";
 import {Bar} from "react-chartjs-2";
-import React, { Suspense } from "react";
+import React from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -16,11 +16,6 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import {Environment, Html, OrbitControls} from "@react-three/drei";
-import {Canvas} from "@react-three/fiber";
-import ReserveToken from "./ReserveToken";
-const CHAIN_NAME = process.env.REACT_APP_CHAIN_NAME; // Mumbai (Polygon Testnet) Chain ID
-const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 ChartJS.register(
   CategoryScale,
@@ -30,27 +25,25 @@ ChartJS.register(
   Tooltip,
   Legend
 );
+const CHAIN_NAME = process.env.REACT_APP_CHAIN_NAME; // Mumbai (Polygon Testnet) Chain ID
+
+const displayedImage = 'https://assets.unegma.net/unegma.work/rain-escrow-example.unegma.work/vault.jpg';
 
 type adminPanelProps = {
-  adminConfigPage: number
-  reserveName: string, handleChangeReserveName: any,
-  reserveSymbol: string, handleChangeReserveSymbol: any,
-  reserveInitialSupply: any, handleChangeReserveInitialSupply: any,
-  resetToDefault: any, setAdminConfigPage: any,
-  buttonLock: any, deployToken: any
-  // todo might be able to change how these are imported
-  address: string, setAddress: any
+  adminConfigPage: number, setAdminConfigPage: any, resetToDefault: any
+  saleAddress: string, handleChangeSaleAddress: any,
+  tokenName: string, handleChangeTokenName: any,
+  tokenSymbol: string, handleChangeTokenSymbol: any,
+  buttonLock: any, deploy: any
 }
 
-export default function DeployPanelView({
-  adminConfigPage,
-  reserveName, handleChangeReserveName,
-  reserveSymbol, handleChangeReserveSymbol,
-  reserveInitialSupply, handleChangeReserveInitialSupply,
-  resetToDefault, setAdminConfigPage,
-  buttonLock, deployToken,
-  // todo might be able to change how these are imported
-  address, setAddress
+// todo rename from admin panel
+export default function DeploymentPanelView({
+  adminConfigPage, setAdminConfigPage, resetToDefault,
+  saleAddress, handleChangeSaleAddress,
+  tokenName, handleChangeTokenName,
+  tokenSymbol, handleChangeTokenSymbol,
+  buttonLock, deploy
   } : adminPanelProps)
 {
 
@@ -70,7 +63,7 @@ export default function DeployPanelView({
   };
 
   const data = {
-    labels: ['Tx1: Deploy Token'],
+    labels: ['Tx1: Deploy Token', 'Tx2: Approve for Deposit', 'Tx3: Deposit to Escrow'],
     datasets: [
       {
         label: '',
@@ -79,7 +72,7 @@ export default function DeployPanelView({
       },
       {
         label: '',
-        data: [0.01268265], // todo base it on dynamic matic costs
+        data: [0.01268265, 0.01268265, 0.01268265], // todo base it on dynamic matic costs //TODO THESE ARE NOT CORRECT
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
       },
       {
@@ -92,7 +85,7 @@ export default function DeployPanelView({
 
   return (
     <>
-      <NavBar address={address} setAddress={setAddress} />
+      <NavBar string={`Configure ${tokenSymbol} Escrow`} />
 
       <Box
         className="admin-form"
@@ -105,33 +98,18 @@ export default function DeployPanelView({
       >
 
         <Typography variant="h4" component="h2" color="black" align="center">
-          Configure Faucet Deployment
+          Configure {tokenSymbol} Escrow
         </Typography>
 
-        { adminConfigPage === 0 && (
-          <>
-            <Typography color="black" align="center">
-              Rain Protocol ERC20 Faucet Demo, tutorials: <a href="https://docs.rainprotocol.xyz">docs.rainprotocol.xyz</a>
-            </Typography>
+        <Typography color="black" align="center">
+          Rain Protocol Escrow Demo, tutorials: <a href="https://docs.rainprotocol.xyz">docs.rainprotocol.xyz</a>
+        </Typography>
 
-            <Typography color="black" align="center">
-              {/*todo change to rUSD?*/}
-             <a href={`${BASE_URL}/0xCCe6fb1921497715163F4a038521d3145f308652`} target="_blank">Example Faucet: Rain USD (rUSD)</a>
-            </Typography>
-          </>
-        )}
+        <Typography color="black" align="center">
+          <a href={`https://rain-voucher-sale.unegma.work/${saleAddress}`} target="_blank">Participants in this Sale</a> will be able to claim {tokenSymbol}.
+        </Typography>
 
-        <Canvas hidden={!(adminConfigPage !== 1)} className="the-canvas-deploypanel" camera={{ position: [0, 0, 20], fov: 20 }} performance={{ min: 0.1 }}>
-          <ambientLight intensity={0.1} />
-          <directionalLight intensity={0.01} position={[5, 25, 20]} />
-          <Suspense fallback={<Html className="black">loading..</Html>}>
-            <ReserveToken rotation={[1,1,1]} reserveSymbol={reserveSymbol} />
-            <Environment preset="studio" />
-          </Suspense>
-          <OrbitControls autoRotate autoRotateSpeed={1} enableZoom={false} enablePan={false} enableRotate={false} />
-          {/*<OrbitControls enableZoom={true} enablePan={true} enableRotate={true} />*/}
-        </Canvas>
-
+        <img hidden={!(adminConfigPage !== 1)} className="mainImage" src={displayedImage} alt="#" />
 
         { adminConfigPage === 0 && (
           <>
@@ -140,30 +118,30 @@ export default function DeployPanelView({
             </Typography>
 
             <FormControl variant="standard">
-              <InputLabel className="input-box-label" htmlFor="component-helper">Reserve Token Name</InputLabel>
+              <InputLabel className="input-box-label" htmlFor="component-helper">Sale Address (must be closed)</InputLabel>
               <Input
                 id="component-helper"
-                value={reserveName}
-                onChange={handleChangeReserveName}
+                value={saleAddress}
+                onChange={handleChangeSaleAddress}
               />
             </FormControl>
 
 
             <FormControl variant="standard">
-              <InputLabel className="input-box-label" htmlFor="component-helper">Reserve Token Symbol</InputLabel>
+              <InputLabel className="input-box-label" htmlFor="component-helper">Token Name (claimable by Sale participants)</InputLabel>
               <Input
                 id="component-helper"
-                value={reserveSymbol}
-                onChange={handleChangeReserveSymbol}
+                value={tokenName}
+                onChange={handleChangeTokenName}
               />
             </FormControl>
 
             <FormControl variant="standard">
-              <InputLabel className="input-box-label" htmlFor="component-helper">Amount a Faucet User will Receive</InputLabel>
+              <InputLabel className="input-box-label" htmlFor="component-helper">Token Symbol (claimable by Sale participants)</InputLabel>
               <Input
                 id="component-helper"
-                value={reserveInitialSupply}
-                onChange={handleChangeReserveInitialSupply}
+                value={tokenSymbol}
+                onChange={handleChangeTokenSymbol}
               />
             </FormControl>
 
@@ -192,7 +170,7 @@ export default function DeployPanelView({
 
             <div className="buttons-box">
               <Button className="fifty-percent-button" variant="outlined" onClick={() => {setAdminConfigPage(adminConfigPage-1)}}>Previous</Button>
-              <Button className="fifty-percent-button" disabled={buttonLock} variant="contained" onClick={() => {deployToken()}}>Deploy</Button>
+              <Button className="fifty-percent-button" disabled={buttonLock} variant="contained" onClick={() => {deploy()}}>Deploy</Button>
             </div>
           </>
         )}

@@ -55,6 +55,11 @@ body {
   user-select: none;
 }
 
+canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
 .canvasContainer {
 
 }
@@ -142,17 +147,12 @@ body {
   z-index: 1500;
 }
 
-.the-canvas {
-  width: 100vw !important;
-  height: 60vh !important; /* above 70 seems to break something */
-}
-
-.the-canvas:hover {
+canvas:hover {
   cursor: pointer;
 }
 
 .mainImage {
-  max-width: 30vw;
+  max-width: 20vw;
   height: auto;
   align-self: center;
 }
@@ -161,10 +161,6 @@ body {
   color: black;
 }
 
-.the-canvas-deploypanel {
-  width: 100% !important;
-  height: 200px !important;
-}
 
 .deploy-own {
   display: block;
@@ -173,14 +169,15 @@ body {
   background-color: black;
   font-size: 16px;
   padding: 10px;
-  bottom: 5px;
-  right: 5px;
+  bottom: 10px;
+  right: 10px;
+  /*z-index:999;*/
 }
 
 .deploy-own a {
   color: white;
-  /*text-decoration: none;*/
 }
+
 
 .red {
   color: red;

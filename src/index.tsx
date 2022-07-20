@@ -22,9 +22,9 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <Web3ReactProvider getLibrary={getLibrary}>
-    <Router>
-      <App/>
-    </Router>
+      <Router>
+        <App/>
+      </Router>
     </Web3ReactProvider>
   </React.StrictMode>
 );
